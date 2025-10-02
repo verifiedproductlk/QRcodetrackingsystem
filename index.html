@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Redirecting…</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <p id="status">Recording scan…</p>
+<script>
+(async function(){
+  const params = new URLSearchParams(location.search);
+  const u = params.get('u') || 'gh'; // short key default
+  const workerEndpoint = "https://your-worker-subdomain.workers.dev/api/track"; // <- update
+
+  // POST to worker to log & get geo JSON
+  try {
+    const res = await fetch(workerEndpoint, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ short: u, referer: document.referrer || null })
+    });
+
+    if (!res.ok) {
+      document.getElementById('status').textContent = 'Failed to record scan (network). Redirecting...';
+      // fallback redirect
+      window.location.replace("https://github.com/yourusername/your-repo");
+      return;
+    }
+
+    const info = await res.json();
+    // info will contain { ip, country, region, city, lat, lon, timezone, isp, recorded_at, redirect_url }
+
+    // optional: show some info briefly
+    console.log("Track info:", info);
+    // redirect to target (provided by worker)
+    if (info.redirect_url) {
+      window.location.replace(info.redirect_url);
+    } else {
+      document.getElementById('status').textContent = 'Done. Thank you.';
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById('status').textContent = 'Error contacting tracker. Redirecting...';
+    window.location.replace("https://github.com/yourusername/your-repo");
+  }
+})();
+</script>
+</body>
+</html>
