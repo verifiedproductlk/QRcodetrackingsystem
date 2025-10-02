@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>QR Scan Viewer</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Roboto, Arial; padding: 18px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 6px 8px; border: 1px solid #ddd; text-align: left; font-size: 13px; }
+    th { background:#f7f7f7; }
+    .controls { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h2>QR Scan Locations</h2>
+  <div class="controls">
+    <button id="refresh">Refresh</button>
+    <a id="downloadCsv" href="#" target="_blank">Download CSV</a>
+    <span id="count" style="margin-left:12px"></span>
+  </div>
+  <div id="msg"></div>
+  <div id="tableWrap"></div>
+
+<script>
+  const BASE = 'https://qr-tracker-worker.businesstroffice.workers.dev';
+  const $msg = document.getElementById('msg');
+  const $wrap = document.getElementById('tableWrap');
+  const $count = document.getElementById('count');
+  const $download = document.getElementById('downloadCsv');
+
+  async function load() {
+    $msg.textContent = 'Loading...';
+    $wrap.innerHTML = '';
+    try {
+      const res = await fetch(BASE + '/locations');
+      if (!res.ok) throw new Error('Failed to load: ' + res.status);
+      const data = await res.json();
+      $msg.textContent = '';
+      $count.textContent = data.length + ' records';
+      $download.href = BASE + '/locations.csv';
+
+      if (data.length === 0) {
+        $wrap.innerHTML = '<p>No records yet.</p>';
+        return;
+      }
+
+      // build table
+      const cols = ['timestamp','track_key','latitude','longitude','accuracy_m','user_agent'];
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const trh = document.createElement('tr');
+      cols.forEach(c => { const th = document.createElement('th'); th.textContent = c; trh.appendChild(th); });
+      thead.appendChild(trh); table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        cols.forEach(c => {
+          const td = document.createElement('td');
+          let v = row[c];
+          if (v === undefined || v === null) v = '';
+          td.textContent = String(v);
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      $wrap.appendChild(table);
+    } catch (e) {
+      $msg.textContent = 'Error: ' + e.message;
+    }
+  }
+
+  document.getElementById('refresh').addEventListener('click', load);
+  load();
+</script>
+</body>
+</html>
