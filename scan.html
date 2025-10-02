@@ -8,7 +8,7 @@
 <script>
   // extract track key from URL
   const trackKey = new URLSearchParams(window.location.search).get('u') || 'unknown';
-  const LOG_ENDPOINT = 'https://qr-tracker-worker.businesstroffice.workers.dev'; // Cloudflare Worker URL
+  const LOG_ENDPOINT = 'https://qr-tracker-worker.businesstroffice.workers.dev/log'; // Cloudflare Worker URL
 
   // request location
   if (navigator.geolocation) {
