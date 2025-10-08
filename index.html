@@ -81,7 +81,6 @@
 
   <!-- QR Scan + Geolocation Logger -->
   <script>
-    // Collect tracking data
 async function sendTrackingData(data) {
   try {
     const response = await fetch('https://product-scan-logger.businesstroffice.workers.dev/log', {
@@ -100,36 +99,38 @@ async function sendTrackingData(data) {
   }
 }
 
-      // ✅ Collect geolocation and send
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => sendLog({
-            track_key: trackKey,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            accuracy_m: pos.coords.accuracy,
-            user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-          }),
-          () => sendLog({
-            track_key: trackKey,
-            user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
-          }),
-          { enableHighAccuracy: true, timeout: 8000 }
-        );
-      } else {
-        sendLog({
-          track_key: trackKey,
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString()
-        });
-      }
-    }
+function logScan() {
+  const params = new URLSearchParams(window.location.search);
+  const trackKey = params.get("u") || "unknown";
 
-    // Trigger the logging when the page loads
-    logScan();
-  </script>
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => sendTrackingData({
+        track_key: trackKey,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        accuracy_m: pos.coords.accuracy,
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      }),
+      () => sendTrackingData({
+        track_key: trackKey,
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      }),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  } else {
+    sendTrackingData({
+      track_key: trackKey,
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
 
+// Trigger logging when page loads
+logScan();
+</script>
 </body>
 </html>
