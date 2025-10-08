@@ -1,75 +1,68 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thank You for Your Purchase</title>
-<!-- Modern Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  /* ===== Reset & Base ===== */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #e0f7fa, #fff9f0);
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 40px 20px;
-    text-align: center;
-    overflow-x: hidden;
-    position: relative;
-  }
-
-  /* ===== Header & Typography ===== */
-  h1 { font-size: 2.8rem; color: #2e7d32; margin-bottom: 20px; }
-  p { font-size: 1.2rem; line-height: 1.6; max-width: 600px; margin-bottom: 30px; color: #555; }
-
-  /* ===== Center Circle Image ===== */
-  .product-image {
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: 0 auto 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.3);
-    border: 5px solid rgba(255,255,255,0.6);
-    background: #fff;
-  }
-  .product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* ensures image covers the circle */
-    display: block;
-  }
-
-  /* ===== Floating Leaves ===== */
-  .leaf {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    background: url('https://cdn-icons-png.flaticon.com/512/2907/2907761.png') no-repeat center/contain;
-    opacity: 0.2;
-    animation: floatLeaf 6s infinite ease-in-out;
-  }
-  .leaf:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
-  .leaf:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; }
-  .leaf:nth-child(3) { bottom: 15%; left: 15%; animation-delay: 4s; }
-  @keyframes floatLeaf { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(20px) rotate(15deg);} }
-
-  /* ===== Responsive ===== */
-  @media (max-width: 600px) {
-    h1 { font-size: 2rem; }
-    p { font-size: 1rem; }
-    .product-image { width: 200px; height: 200px; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thank You for Your Purchase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #fff9f0);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+    h1 { font-size: 2.8rem; color: #2e7d32; margin-bottom: 20px; }
+    p { font-size: 1.2rem; line-height: 1.6; max-width: 600px; margin-bottom: 30px; color: #555; }
+    .product-image {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 15px 35px rgba(46, 125, 50, 0.3);
+      border: 5px solid rgba(255,255,255,0.6);
+      background: #fff;
+    }
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .leaf {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: url('https://cdn-icons-png.flaticon.com/512/2907/2907761.png') no-repeat center/contain;
+      opacity: 0.2;
+      animation: floatLeaf 6s infinite ease-in-out;
+    }
+    .leaf:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+    .leaf:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; }
+    .leaf:nth-child(3) { bottom: 15%; left: 15%; animation-delay: 4s; }
+    @keyframes floatLeaf {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(20px) rotate(15deg); }
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      p { font-size: 1rem; }
+      .product-image { width: 200px; height: 200px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -85,38 +78,53 @@
   </div>
   <p>This is our premium moisturizing cream made with natural ingredients, designed to nourish and hydrate your skin, giving it a healthy, radiant glow. Experience the essence of nature in every application.</p>
 
-  <!-- Geolocation + D1 logging -->
+  <!-- QR Scan + Geolocation Logger -->
   <script>
-  (async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const trackKey = urlParams.get('u') || 'unknown';
+    async function logScan() {
+      const params = new URLSearchParams(window.location.search);
+      const trackKey = params.get("u") || "unknown";
 
-    let latitude = null, longitude = null, accuracy_m = null;
-    try {
-      await new Promise(resolve => {
-        navigator.geolocation.getCurrentPosition(pos => {
-          latitude = pos.coords.latitude;
-          longitude = pos.coords.longitude;
-          accuracy_m = pos.coords.accuracy;
-          resolve();
-        }, () => resolve(), { timeout: 5000 });
-      });
-    } catch(e){}
+      // Your actual Worker URL
+      const workerUrl = "https://product-scan-logger.businesstroffice.workers.dev/log";
 
-    try {
-      await fetch("https://qr-tracker-worker.businesstroffice.workers.dev/log", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          track_key: trackKey,
-          latitude,
-          longitude,
-          accuracy_m,
-          user_agent: navigator.userAgent
-        })
-      });
-    } catch(e) { console.error("Failed to log scan:", e); }
-  })();
+      // Geolocation + payload preparation
+      const sendLog = async (data) => {
+        try {
+          const res = await fetch(workerUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+          const json = await res.json();
+          console.log("Scan logged:", json);
+          // Optional: display confirmation to user
+          const msg = document.createElement("p");
+          msg.textContent = "✅ Your scan has been registered!";
+          msg.style.color = "#2e7d32";
+          document.body.appendChild(msg);
+        } catch (e) {
+          console.error("Failed to send scan:", e);
+        }
+      };
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => sendLog({
+            track_key: trackKey,
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            accuracy_m: pos.coords.accuracy,
+            user_agent: navigator.userAgent
+          }),
+          () => sendLog({ track_key: trackKey, user_agent: navigator.userAgent }),
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
+      } else {
+        sendLog({ track_key: trackKey, user_agent: navigator.userAgent });
+      }
+    }
+
+    logScan();
   </script>
 
 </body>
