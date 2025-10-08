@@ -57,6 +57,21 @@
       0%,100% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(20px) rotate(15deg); }
     }
+    .privacy-button {
+      background-color: #2e7d32;
+      color: #fff;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+      margin-top: 20px;
+    }
+    .privacy-button:hover {
+      background-color: #1b4f1b;
+    }
     @media (max-width: 600px) {
       h1 { font-size: 2rem; }
       p { font-size: 1rem; }
@@ -74,10 +89,12 @@
   <!-- Content -->
   <h1>Thank You for Purchasing Our Product!</h1>
   <div class="product-image">
-    <!-- Replace the below URL with your actual GitHub-hosted image -->
     <img src="https://raw.githubusercontent.com/verifiedproductlk/QRcodetrackingsystem/main/Designer.png" alt="Product Image">
   </div>
   <p>This is our premium moisturizing cream made with natural ingredients, designed to nourish and hydrate your skin, giving it a healthy, radiant glow. Experience the essence of nature in every application.</p>
+
+  <!-- Privacy Policy Button -->
+  <a href="privacy.html" class="privacy-button">Privacy Policy</a>
 
   <!-- QR Scan + Geolocation Logger -->
   <script>
@@ -88,12 +105,8 @@ async function sendTrackingData(data) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-
-    if (response.ok) {
-      console.log('✅ Data sent successfully');
-    } else {
-      console.error('❌ Failed to send data');
-    }
+    if (response.ok) console.log('✅ Data sent successfully');
+    else console.error('❌ Failed to send data');
   } catch (error) {
     console.error('🚨 Error sending data:', error);
   }
@@ -129,7 +142,6 @@ function logScan() {
   }
 }
 
-// Trigger logging when page loads
 logScan();
 </script>
 </body>
