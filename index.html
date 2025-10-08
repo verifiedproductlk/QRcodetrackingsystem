@@ -74,7 +74,8 @@
   <!-- Content -->
   <h1>Thank You for Purchasing Our Product!</h1>
   <div class="product-image">
-    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/Designer.png" alt="Product Image">
+    <!-- Replace the below URL with your actual GitHub-hosted image -->
+    <img src="https://raw.githubusercontent.com/verifiedproductlk/QRcodetrackingsystem/main/Designer.png" alt="Product Image">
   </div>
   <p>This is our premium moisturizing cream made with natural ingredients, designed to nourish and hydrate your skin, giving it a healthy, radiant glow. Experience the essence of nature in every application.</p>
 
@@ -84,10 +85,10 @@
       const params = new URLSearchParams(window.location.search);
       const trackKey = params.get("u") || "unknown";
 
-      // Your actual Worker URL
+      // ✅ Cloudflare Worker endpoint (this is where logs go)
       const workerUrl = "https://product-scan-logger.businesstroffice.workers.dev/log";
 
-      // Geolocation + payload preparation
+      // Helper to send data to worker
       const sendLog = async (data) => {
         try {
           const res = await fetch(workerUrl, {
@@ -97,9 +98,10 @@
           });
           const json = await res.json();
           console.log("Scan logged:", json);
-          // Optional: display confirmation to user
+
+          // Confirmation message
           const msg = document.createElement("p");
-          msg.textContent = "✅ Your scan has been registered!";
+          msg.textContent = "✅ ;
           msg.style.color = "#2e7d32";
           document.body.appendChild(msg);
         } catch (e) {
@@ -107,6 +109,7 @@
         }
       };
 
+      // ✅ Collect geolocation and send
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => sendLog({
@@ -114,16 +117,26 @@
             latitude: pos.coords.latitude,
             longitude: pos.coords.longitude,
             accuracy_m: pos.coords.accuracy,
-            user_agent: navigator.userAgent
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString()
           }),
-          () => sendLog({ track_key: trackKey, user_agent: navigator.userAgent }),
+          () => sendLog({
+            track_key: trackKey,
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+          }),
           { enableHighAccuracy: true, timeout: 8000 }
         );
       } else {
-        sendLog({ track_key: trackKey, user_agent: navigator.userAgent });
+        sendLog({
+          track_key: trackKey,
+          user_agent: navigator.userAgent,
+          timestamp: new Date().toISOString()
+        });
       }
     }
 
+    // Trigger the logging when the page loads
     logScan();
   </script>
 
